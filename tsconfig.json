@@ -1,0 +1,19 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2020",
+		"outDir": "dist/",
+		"rootDir": "src/",
+		"allowJs": true,
+		"moduleResolution": "node",
+    	"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"baseUrl": "./",
+		"incremental": true,
+		"sourceMap": true
+	},
+	"include": ["./src/**/*"]
+}

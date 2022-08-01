@@ -4,7 +4,10 @@
   "description": "server for controling minesweepering drones",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run build && npm run run",
+    "build": "./node_modules/.bin/tsc",
+    "run": "node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/nazar-korpach/mine_detector/issues"
   },
-  "homepage": "https://github.com/nazar-korpach/mine_detector#readme"
+  "homepage": "https://github.com/nazar-korpach/mine_detector#readme",
+  "dependencies": {
+    "typescript": "^4.7.4"
+  }
 }
