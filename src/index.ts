@@ -1,3 +1,5 @@
+import {DroneMessanger} from './messanger';
+
 (async () => {
-  console.log('hello world!');
+  const server = new DroneMessanger(3000);
 } )()
