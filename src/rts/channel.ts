@@ -1,6 +1,6 @@
 import {Socket} from 'net'
 import {EventEmitter} from 'events'
-import { IncomingMessage, IncomingMessageType } from './rts-messages';
+import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage } from './rts-messages';
 import {RTSMessageBuilder} from './message-builder';
 
 export class SafeChannel extends EventEmitter {  
@@ -24,6 +24,8 @@ export class SafeChannel extends EventEmitter {
 
   private parse(data: Buffer): Promise<IncomingMessage> {
     return new Promise<IncomingMessage>((res, rej) => {
+      console.log('got row message', data.toString());
+
       let message: IncomingMessage
 
       try {
@@ -54,8 +56,8 @@ export class SafeChannel extends EventEmitter {
       res(message);
     })
   }
-
-  private handle(message: IncomingMessage) {
+  // TODO fix any type
+  private handle(message: any) {
     console.log('got message', message);
 
     switch (message.type) {
@@ -81,16 +83,16 @@ export class SafeChannel extends EventEmitter {
 
 export declare interface SafeChannel {
   emit(event: 'invalid_message', message: Buffer | string): boolean;
-  emit(event: 'auth', message: IncomingMessage): boolean;
-  emit(event: 'accepted', message: IncomingMessage): boolean;
-  emit(event: 'telemetry', message: IncomingMessage): boolean;
-  emit(event: 'mine_found', message: IncomingMessage): boolean;
-  emit(event: 'end_of_mission', message: IncomingMessage): boolean;
+  emit(event: 'auth', message: AuthMessage): boolean;
+  emit(event: 'accepted', message: AcceptedMessage): boolean;
+  emit(event: 'telemetry', message: TelemetryMessage): boolean;
+  emit(event: 'mine_found', message: MineFoundMessage): boolean;
+  emit(event: 'end_of_mission', message: EndMessage): boolean;
 
   on(message: 'invalid_message', listener: (message: Buffer | string) => void): this;
-  on(message: 'auth', listener: (message: IncomingMessage) => void): this;
-  on(message: 'accepted', listener: (message: IncomingMessage) => void): this;
-  on(message: 'telemetry', listener: (message: IncomingMessage) => void): this;
-  on(message: 'mine_found', listener: (message: IncomingMessage) => void): this;
-  on(message: 'end_of_mission', listener: (message: IncomingMessage) => void): this;
+  on(message: 'auth', listener: (message: AuthMessage) => void): this;
+  on(message: 'accepted', listener: (message: AcceptedMessage) => void): this;
+  on(message: 'telemetry', listener: (message: TelemetryMessage) => void): this;
+  on(message: 'mine_found', listener: (message: MineFoundMessage) => void): this;
+  on(message: 'end_of_mission', listener: (message: EndMessage) => void): this;
 }
