@@ -2,6 +2,7 @@ import {Socket} from 'net'
 import {EventEmitter} from 'events'
 import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage } from './rts-messages';
 import {RTSMessageBuilder} from './message-builder';
+import {typeToValidator, generalValidator} from './validator/validator';
 
 export class SafeChannel extends EventEmitter {  
   constructor(private socket: Socket) {
@@ -33,6 +34,7 @@ export class SafeChannel extends EventEmitter {
       }
       catch (err) {
         rej(this.invalidMessageErrorBuilder(data.toString(), 'message is not a json object'));
+        return;
       }
 
       res(message);
@@ -40,20 +42,21 @@ export class SafeChannel extends EventEmitter {
   }
 
   private validate(message: IncomingMessage) {
-    // TODO move to normal validation
     return new Promise<IncomingMessage>((res, rej) => {
+      
+      if(generalValidator(message)) {
+        const typedValidator = typeToValidator[message.type];
 
-      if(!message.type) {
-        rej(this.invalidMessageErrorBuilder(message.toString(), 'type field is required'));
-        return;
+        if(typedValidator(message)) {
+          res(message);
+        }
+        else {
+          rej(new Error(JSON.stringify(typedValidator.errors)));
+        }
       }
-
-      if( !(Object.values(IncomingMessageType).includes(message.type) ) ) {
-        rej(this.invalidMessageErrorBuilder(JSON.stringify(message), 'type is invalid'));
-        return;
+      else {
+        rej(new Error(JSON.stringify(generalValidator.errors)));
       }
-
-      res(message);
     })
   }
   // TODO fix any type
