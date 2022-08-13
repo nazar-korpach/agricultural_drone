@@ -1,6 +1,6 @@
 import {Socket} from 'net'
 import {EventEmitter} from 'events'
-import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage } from './rts-messages';
+import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage, InvalidMessage } from './rts-messages';
 import {RTSMessageBuilder} from './message-builder';
 import {typeToValidator, generalValidator} from './validator/validator';
 
@@ -8,11 +8,11 @@ export class SafeChannel extends EventEmitter {
   constructor(private socket: Socket) {
     super()
 
-    this.socket.on('data', data => 
-      this.parse(data)
+    this.socket.on('data', rawMessage => 
+      this.parse(rawMessage)
       .then( message => this.validate(message) )
       .then( message => this.handle(message) )
-      .catch( err => this.onIvalidMessage(err) ));
+      .catch( err => this.onIvalidMessage(rawMessage, err) ));
   }
 
   sendMission(mission: [latitude: number, longitude: number][]) {
@@ -21,6 +21,10 @@ export class SafeChannel extends EventEmitter {
 
   private send(message: Object) {
     this.socket.write(Buffer.from(JSON.stringify(message)))
+  }
+
+  private sendGotInvalid(originalMessage: string, error: string) {
+    this.send(RTSMessageBuilder.invalid(originalMessage, error))
   }
 
   private parse(data: Buffer): Promise<IncomingMessage> {
@@ -33,7 +37,7 @@ export class SafeChannel extends EventEmitter {
         message = JSON.parse(data.toString());
       }
       catch (err) {
-        rej(this.invalidMessageErrorBuilder(data.toString(), 'message is not a json object'));
+        rej(new Error('message is not a json object'));
         return;
       }
 
@@ -72,27 +76,24 @@ export class SafeChannel extends EventEmitter {
     }
   }
 
-  private invalidMessageErrorBuilder(data: string, reason: string): Error {
-    return new Error(`" ${data} " ${reason}`);
-  }
-
-  private onIvalidMessage(err: Error): void {
+  private onIvalidMessage(rawMessage: Buffer, err: Error): void {
     // TODO add normal logging
-    console.log('invalid_message', err.message)
+    console.log('invalid_message', err.message);
+    this.sendGotInvalid(rawMessage.toString(), err.message);
     this.emit('invalid_message', err.message);
   }
 
 }
 
 export declare interface SafeChannel {
-  emit(event: 'invalid_message', message: Buffer | string): boolean;
+  emit(event: 'invalid_message', message: string): boolean;
   emit(event: 'auth', message: AuthMessage): boolean;
   emit(event: 'accepted', message: AcceptedMessage): boolean;
   emit(event: 'telemetry', message: TelemetryMessage): boolean;
   emit(event: 'mine_found', message: MineFoundMessage): boolean;
   emit(event: 'end_of_mission', message: EndMessage): boolean;
 
-  on(message: 'invalid_message', listener: (message: Buffer | string) => void): this;
+  on(message: 'invalid_message', listener: (message: string) => void): this;
   on(message: 'auth', listener: (message: AuthMessage) => void): this;
   on(message: 'accepted', listener: (message: AcceptedMessage) => void): this;
   on(message: 'telemetry', listener: (message: TelemetryMessage) => void): this;

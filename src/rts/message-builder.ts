@@ -1,4 +1,4 @@
-import {MissionSetupMessage, OutcomingMessageType} from './rts-messages';
+import {MissionSetupMessage, InvalidMessage, OutcomingMessageType} from './rts-messages';
 
 export class RTSMessageBuilder {
   static mission(message: [latitude: number, longitude: number][]): MissionSetupMessage{
@@ -6,6 +6,15 @@ export class RTSMessageBuilder {
       type: OutcomingMessageType.missionStarted,
       timestamp: Date.now(),
       coords: message
+    }
+  }
+
+  static invalid(originalMessage: string, reason: string): InvalidMessage {
+    return {
+      type: OutcomingMessageType.invalid,
+      timestamp: Date.now(),
+      originalMessage,
+      reason
     }
   }
 }

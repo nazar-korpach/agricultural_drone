@@ -7,7 +7,8 @@ export enum IncomingMessageType {
 }
 
 export enum OutcomingMessageType {
-  missionStarted = 'coords'
+  missionStarted = 'coords',
+  invalid = 'invalid_message'
 }
 
 export interface RTSMessage {
@@ -52,4 +53,10 @@ export interface EndMessage extends IncomingMessage {
 export interface MissionSetupMessage extends OutcomingMessage {
   type: OutcomingMessageType.missionStarted
   coords: [latitude: number, longitude: number][]
+}
+
+export interface InvalidMessage extends OutcomingMessage {
+  type: OutcomingMessageType.invalid
+  originalMessage: string
+  reason: string
 }
