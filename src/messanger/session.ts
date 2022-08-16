@@ -9,9 +9,10 @@ export class Session {
   }
 
   private setupChannel() {
-    this.messageChanel.on('mine_found', message => console.log('got ', message))
     this.messageChanel.on('accepted', message => console.log('got ', message))
     this.messageChanel.on('telemetry', message => console.log('got ', message))
+    this.messageChanel.on('soil_sample', message => console.log('got ', message))
+    this.messageChanel.on('express_test', message => console.log('got ', message))
     this.messageChanel.on('end_of_mission', message => console.log('got ', message))
   }
 

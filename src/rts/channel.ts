@@ -1,6 +1,6 @@
 import {Socket} from 'net'
 import {EventEmitter} from 'events'
-import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage, InvalidMessage } from './rts-messages';
+import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, EndMessage, SoilSampleMessage, ExpressTestMessage } from './rts-messages';
 import {RTSMessageBuilder} from './message-builder';
 import {typeToValidator, generalValidator} from './validator/validator';
 
@@ -70,8 +70,7 @@ export class SafeChannel extends EventEmitter {
     switch (message.type) {
       case IncomingMessageType.auth: this.emit('auth', message); break; 
       case IncomingMessageType.accepted: this.emit('accepted', message); break; 
-      case IncomingMessageType.telemetry: this.emit('telemetry', message); break; 
-      case IncomingMessageType.mineFound: this.emit('mine_found', message); break; 
+      case IncomingMessageType.telemetry: this.emit('telemetry', message); break;
       case IncomingMessageType.endOfMission: this.emit('end_of_mission', message); break; 
     }
   }
@@ -90,13 +89,15 @@ export declare interface SafeChannel {
   emit(event: 'auth', message: AuthMessage): boolean;
   emit(event: 'accepted', message: AcceptedMessage): boolean;
   emit(event: 'telemetry', message: TelemetryMessage): boolean;
-  emit(event: 'mine_found', message: MineFoundMessage): boolean;
+  emit(event: 'soil_sample', message: SoilSampleMessage): boolean;
+  emit(event: 'express_test', message: ExpressTestMessage): boolean;
   emit(event: 'end_of_mission', message: EndMessage): boolean;
 
   on(message: 'invalid_message', listener: (message: string) => void): this;
   on(message: 'auth', listener: (message: AuthMessage) => void): this;
   on(message: 'accepted', listener: (message: AcceptedMessage) => void): this;
   on(message: 'telemetry', listener: (message: TelemetryMessage) => void): this;
-  on(message: 'mine_found', listener: (message: MineFoundMessage) => void): this;
+  on(message: 'soil_sample', listener: (message: SoilSampleMessage) => void): this;
+  on(message: 'express_test', listener: (message: ExpressTestMessage) => void): this;  
   on(message: 'end_of_mission', listener: (message: EndMessage) => void): this;
 }

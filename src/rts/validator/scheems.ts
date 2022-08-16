@@ -1,4 +1,4 @@
-import {IncomingMessageType as Type, IncomingMessage, AuthMessage, AcceptedMessage, TelemetryMessage, MineFoundMessage, EndMessage} from "../rts-messages";
+import {IncomingMessageType as Type, IncomingMessage, AuthMessage, AcceptedMessage, TelemetryMessage, EndMessage, SoilSampleMessage, ExpressTestMessage} from "../rts-messages";
 import {JSONSchemaType} from 'ajv';
 
 export const authSchema: JSONSchemaType<AuthMessage> = {
@@ -30,23 +30,40 @@ export const telemetrySchema: JSONSchemaType<TelemetryMessage> = {
     type: { type: 'string', const: Type.telemetry},
     timestamp: {type: 'number'},
     latitude: {type: 'number'},
-    longitude: {type: 'number'}
+    longitude: {type: 'number'},
+    compass: {type: 'number'}
   },
-  required: ['latitude', 'longitude', 'type', 'timestamp'],
+  required: ['latitude', 'longitude', 'compass', 'type', 'timestamp'],
   additionalProperties: false
 }
 
-export const mineFoundrySchema: JSONSchemaType<MineFoundMessage> = {
+export const soilSampleSchema: JSONSchemaType<SoilSampleMessage> = {
   type: 'object',
   properties: {
-    type: { type: 'string', const: Type.mineFound},
+    type: {type: 'string', const: Type.soilSample},
     timestamp: {type: 'number'},
     latitude: {type: 'number'},
-    longitude: {type: 'number'}
+    longitude: {type: 'number'},
   },
-  required: ['latitude', 'longitude', 'type', 'timestamp'],
+  required: ['type', 'timestamp', 'latitude', 'longitude'],
   additionalProperties: false
 }
+
+export const expressTestSchema: JSONSchemaType<ExpressTestMessage> = {
+  type: 'object',
+  properties: {
+    type: {type: 'string', const: Type.expressTest},
+    timestamp: {type: 'number'},
+    latitude: {type: 'number'},
+    longitude: {type: 'number'},
+    temperature: {type: 'number'},
+    humidity: {type: 'number'},
+    ph: {type: 'number'}
+  },
+  required: ['type', 'timestamp', 'latitude', 'longitude', 'temperature', 'humidity', 'ph'],
+  additionalProperties: false
+}
+
 
 export const endOfMisssionSchema: JSONSchemaType<EndMessage> = {
   type: 'object',

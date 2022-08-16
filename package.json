@@ -1,7 +1,7 @@
 {
-  "name": "mine_detector_server",
+  "name": "agricultural_drone_server",
   "version": "1.0.0",
-  "description": "server for controling minesweepering drones",
+  "description": "server for controling agricultural drones",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,14 +11,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nazar-korpach/mine_detector.git"
+    "url": "git+https://github.com/nazar-korpach/agricultural_drone.git"
   },
   "author": "Nazik",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nazar-korpach/mine_detector/issues"
+    "url": "https://github.com/nazar-korpach/agricultural_drone/issues"
   },
-  "homepage": "https://github.com/nazar-korpach/mine_detector#readme",
+  "homepage": "https://github.com/nazar-korpach/agricultural_drone#readme",
   "devDependencies": {
     "@types/ajv": "^1.0.0",
     "@types/node": "^14.18.23",

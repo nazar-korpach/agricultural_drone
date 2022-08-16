@@ -2,8 +2,9 @@ export enum IncomingMessageType {
   auth = 'init_message',
   accepted = 'coords_accepted',
   telemetry = 'common_telemetry',
-  mineFound = 'volnurable_spot',
-  endOfMission = 'end_of_mission'
+  endOfMission = 'end_of_mission',
+  soilSample = 'soil_sample',
+  expressTest = 'express_test'
 }
 
 export enum OutcomingMessageType {
@@ -38,12 +39,24 @@ export interface TelemetryMessage extends IncomingMessage {
   type: IncomingMessageType.telemetry
   latitude: number
   longitude: number
+  compass: number
 }
 
-export interface MineFoundMessage extends IncomingMessage {
-  type: IncomingMessageType.mineFound
+export interface SoilSampleMessage extends IncomingMessage {
+  type: IncomingMessageType.soilSample
+  timestamp: number
   latitude: number
   longitude: number
+}
+
+export interface ExpressTestMessage extends IncomingMessage {
+  type: IncomingMessageType.expressTest
+  timestamp: number
+  latitude: number
+  longitude: number
+  temperature: number
+  humidity: number
+  ph: number
 }
 
 export interface EndMessage extends IncomingMessage {

@@ -1,1 +1,1 @@
-mine detector drone server
+agracultural drone server for harvesting samples
