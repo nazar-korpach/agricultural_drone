@@ -28,6 +28,8 @@ export interface OutcomingMessage extends RTSMessage {
 export interface AuthMessage extends IncomingMessage {
   type: IncomingMessageType.auth
   deviceID: string 
+  latitude: number
+  longitude: number
 }
 
 export interface AcceptedMessage extends IncomingMessage {

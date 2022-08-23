@@ -6,10 +6,12 @@ export const authSchema: JSONSchemaType<AuthMessage> = {
   properties: {
     type: { type: 'string', const: Type.auth},
     deviceID: {type: 'string'},
-    timestamp: {type: 'number'}
+    timestamp: {type: 'number'},
+    latitude: {type: 'number'},
+    longitude: {type: 'number'}
     
   },
-  required: ['deviceID', 'type', 'timestamp'],
+  required: ['deviceID', 'type', 'timestamp', 'latitude', 'longitude'],
   additionalProperties: false
 }
 
