@@ -1,13 +1,14 @@
-import { Operator } from '@srv/operator';
+import { Operator, OperatorChannel } from '@srv/operator';
 import {SafeChannel, RTServer, AuthMessage} from '../rts';
-import { Session } from "./session";
+import { Session, PendingSession } from "./session";
 import { RealSessionsInteractor, SessionsInteractor } from './sessions.interactor';
 
 const randomID = () => Math.floor(Math.random() * 2**31).toString(); 
 
 export class DroneMessanger {
   private RTServer:  RTServer
-  private sessionPool: {[id: string]: Session} = {}
+  private activeSessionsPool: {[id: string]: Session} = {} 
+  private pendingSessionsPool: {[id: string]: PendingSession} = {}
   private unauthPool: Set<SafeChannel> = new Set()
 
   constructor(RTServerPort: number, private operator: Operator) {
@@ -23,8 +24,18 @@ export class DroneMessanger {
     })
   }
 
-  activeSessions(): Session[] {
-    return Object.values(this.sessionPool);
+  activeSessions(): PendingSession[] {
+    // TODO fix
+    return Object.values(this.pendingSessionsPool);
+  }
+
+  connectOperator(operatorChannel:  OperatorChannel, sessionID: string) {
+    if(!this.pendingSessionsPool[sessionID]) {
+      throw new Error('Session with such id does not exist');
+    }
+    const pendingSession = this.pendingSessionsPool[sessionID];
+    delete this.pendingSessionsPool[sessionID];
+    this.activeSessionsPool[sessionID] = pendingSession.activate(operatorChannel);
   }
 
   private setupOperator() {
@@ -35,7 +46,7 @@ export class DroneMessanger {
     this.unauthPool.delete(channel);
 
     const id = randomID();
-    this.sessionPool[id] = new Session(channel, id, message.deviceID);
+    this.pendingSessionsPool[id] = new PendingSession(channel, id, message.deviceID);
   }
 
 }

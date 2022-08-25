@@ -1,10 +1,13 @@
 import { EventEmitter } from 'events';
 import { OperatorConnection } from './connection';
 import { SessionsInteractor } from '../messanger';
+import { OperatorChannel } from './channel';
 
 export class Operator extends EventEmitter {
   private connection: OperatorConnection = OperatorConnection.NULL()
   private sessionsInteractor: SessionsInteractor = SessionsInteractor.NULL()
+
+  private channelsPool: {[id: string]: OperatorChannel} = {}
 
   constructor() {
     super()
@@ -36,6 +39,19 @@ export class Operator extends EventEmitter {
       ).catch( err => console.log('getting sessions failed', err) );
   })
 
-    this.connection.on('connect_to_session', () => {})
+    this.connection.on('connect_to_session', message => {
+      const id = message.sessionID;
+      const channel = new OperatorChannel(id);
+
+      this.sessionsInteractor.connect(channel, id)
+      .then( () => {
+        this.channelsPool[id] = channel;
+        this.connection.sendConnectedToSession(id, true);
+      } )
+      .catch( err => {
+        console.log('connection to session failed', err)
+        this.connection.sendConnectedToSession(id, false);
+      });
+    })
   }
 }

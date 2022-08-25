@@ -13,6 +13,8 @@ export abstract class OperatorConnection extends EventEmitter{
 
   abstract sendActiveSessions(sessions: [deviveID:  string, sessionID: string][])
 
+  abstract sendConnectedToSession(sessionID: string, succeed: boolean)
+
   static NULL() {
     return new NullOperatorConnection()
   }
@@ -37,6 +39,10 @@ export class RealOperatorConnection extends OperatorConnection {
 
   sendActiveSessions(sessions: [deviveID:  string, sessionID: string][]) {
     this.send(OperatorMessageBuilder.activeSessions(sessions))
+  }
+
+  sendConnectedToSession(sessionID: string, succeed: boolean) {
+    this.send(OperatorMessageBuilder.connectedToSession(sessionID, succeed))
   }
 
   private send(message: Object) {
@@ -122,4 +128,6 @@ export class NullOperatorConnection extends OperatorConnection {
   real() {return false}
 
   sendActiveSessions(sessions: [deviveID:  string, sessionID: string][]) {}
+
+  sendConnectedToSession(sessionID: string, succeed: boolean) {}
 }

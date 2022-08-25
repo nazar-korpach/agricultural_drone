@@ -5,7 +5,8 @@ export enum IncomingMessageType  {
 }
 
 export enum OutcomingMessageType {
-  activeSessions = 'active_sessions'
+  activeSessions = 'active_sessions',
+  connectedToSession = 'connected_to_session'
 }
 
 export interface OperatorMessage {
@@ -39,4 +40,10 @@ export interface ConnectSessionMessage extends IncomingMessage {
 export interface ActiveSessionsMessage extends OutcomingMessage {
   type: OutcomingMessageType.activeSessions
   sessions: [deviveID:  string, sessionID: string][]
+}
+
+export interface ConnectedToSessionMessage extends OutcomingMessage {
+  type: OutcomingMessageType.connectedToSession
+  sessionID: string
+  connected: boolean 
 }
