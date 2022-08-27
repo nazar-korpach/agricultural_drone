@@ -5,28 +5,28 @@ export class Session {
   id: string;
   deviceID: string;
 
-  constructor(private deviceChannel: SafeChannel, private OperatorChannel, id: string, deviceID: string) {
+  constructor(private deviceChannel: SafeChannel, private operatorChannel: OperatorChannel, id: string, deviceID: string) {
     this.id = id;
     this.deviceID = deviceID;
 
-    this.setupChannel()
+    this.setupDeviceChannel()
+    this.setupOperatorChannel()
     console.log('created session')
-
-    // this.startMission([[0, 0], [1, 1], [0, 0]])
-
-    // setInterval( () => this.startMission([[0, 0], [1, 1], [0, 0]]), 1000 )
   }
 
-  private setupChannel() {
-    this.deviceChannel.on('accepted', message => console.log('got ', message))
-    this.deviceChannel.on('telemetry', message => console.log('got ', message))
-    this.deviceChannel.on('soil_sample', message => console.log('got ', message))
-    this.deviceChannel.on('express_test', message => console.log('got ', message))
+  private setupDeviceChannel() {
+    this.deviceChannel.on('accepted', message => this.operatorChannel.emit('mission_started', message))
+    this.deviceChannel.on('telemetry', message => this.operatorChannel.emit('telemetry', message))
+    this.deviceChannel.on('soil_sample', message => this.operatorChannel.emit('soil_sample', message))
+    this.deviceChannel.on('express_test', message => this.operatorChannel.emit('express_test', message))
     this.deviceChannel.on('end_of_mission', message => console.log('got ', message))
   }
 
-  startMission(coords: [latitude: number, longitude: number][]) {
-    this.deviceChannel.sendMission(coords);
+  private setupOperatorChannel() {
+    this.operatorChannel.on('start_mission', message => {
+      // TODO fix types
+      this.deviceChannel.sendMission(message.coords.map( coord => [coord[0], coord[1]] ))
+    })
   }
 }
 

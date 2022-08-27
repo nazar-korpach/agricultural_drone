@@ -1,12 +1,17 @@
 export enum IncomingMessageType  {
   auth = 'auth',
   activeSessions = 'get_sessions',
-  connectToSession = 'connect_to_session'
+  connectToSession = 'connect_to_session',
+  startMission = 'start_mission'
 }
 
 export enum OutcomingMessageType {
   activeSessions = 'active_sessions',
-  connectedToSession = 'connected_to_session'
+  connectedToSession = 'connected_to_session',
+  missionStarted = 'mission_recived',
+  telemetry = 'common_telemetry',
+  soilSample = 'soil_sample',
+  expressTest = 'express_test'
 }
 
 export interface OperatorMessage {
@@ -37,6 +42,12 @@ export interface ConnectSessionMessage extends IncomingMessage {
   sessionID: string
 }
 
+export interface StartMissionMessage extends IncomingMessage {
+  type: IncomingMessageType.startMission,
+  sessionID: string,
+  coords: [latitude: number, longitude: number, action: number][]
+}
+
 export interface ActiveSessionsMessage extends OutcomingMessage {
   type: OutcomingMessageType.activeSessions
   sessions: [deviveID:  string, sessionID: string][]
@@ -46,4 +57,35 @@ export interface ConnectedToSessionMessage extends OutcomingMessage {
   type: OutcomingMessageType.connectedToSession
   sessionID: string
   connected: boolean 
+}
+
+export interface MissionStartedMessage extends OutcomingMessage {
+  type: OutcomingMessageType.missionStarted
+  sessionID: string
+  accepted: boolean
+}
+
+export interface TelemetryMessage extends OutcomingMessage {
+  type: OutcomingMessageType.telemetry,
+  sessionID: string
+  latitude: number
+  longitude: number
+  compass: number
+}
+
+export interface SoilSampleMessage extends OutcomingMessage {
+  type: OutcomingMessageType.soilSample,
+  sessionID: string
+  latitude: number
+  longitude: number
+}
+
+export interface ExpressTestMessage extends OutcomingMessage {
+  type: OutcomingMessageType.expressTest,
+  sessionID: string
+  latitude: number
+  longitude: number
+  temperature: number
+  humidity: number
+  ph: number
 }

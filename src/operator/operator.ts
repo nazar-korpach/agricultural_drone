@@ -2,12 +2,13 @@ import { EventEmitter } from 'events';
 import { OperatorConnection } from './connection';
 import { SessionsInteractor } from '../messanger';
 import { OperatorChannel } from './channel';
+import { ChannelsRouter } from './channels.router';
 
 export class Operator extends EventEmitter {
   private connection: OperatorConnection = OperatorConnection.NULL()
   private sessionsInteractor: SessionsInteractor = SessionsInteractor.NULL()
 
-  private channelsPool: {[id: string]: OperatorChannel} = {}
+  private channelsRouter = new ChannelsRouter(this.connection) 
 
   constructor() {
     super()
@@ -20,6 +21,7 @@ export class Operator extends EventEmitter {
   connect(connection: OperatorConnection) {
     this.connection = connection;
     this.setupConnection();
+    this.channelsRouter.connect(connection);
   }
 
   setInteractor(interactor: SessionsInteractor) {
@@ -45,7 +47,7 @@ export class Operator extends EventEmitter {
 
       this.sessionsInteractor.connect(channel, id)
       .then( () => {
-        this.channelsPool[id] = channel;
+        this.channelsRouter.add(channel);
         this.connection.sendConnectedToSession(id, true);
       } )
       .catch( err => {

@@ -1,4 +1,4 @@
-import {ActiveSessionsMessage, ConnectedToSessionMessage, OutcomingMessageType} from './operator.messages';
+import {ActiveSessionsMessage, ConnectedToSessionMessage, ExpressTestMessage, MissionStartedMessage, OutcomingMessageType, SoilSampleMessage, TelemetryMessage} from './operator.messages';
 
 export class OperatorMessageBuilder {
   static activeSessions(sessions: [deviveID: string, sessionID: string][]): ActiveSessionsMessage {
@@ -15,6 +15,49 @@ export class OperatorMessageBuilder {
       timestamp: Date.now(),
       sessionID,
       connected: succeed
+    }
+  }
+
+  static missionStarted(sessionID: string, accepted: boolean): MissionStartedMessage {
+    return {
+      type: OutcomingMessageType.missionStarted,
+      timestamp: Date.now(),
+      sessionID,
+      accepted
+    }
+  }
+
+  static telemetry(sessionID, latitude: number, longitude: number, compass: number): TelemetryMessage {
+    return {
+      type: OutcomingMessageType.telemetry,
+      timestamp: Date.now(),
+      sessionID,
+      latitude,
+      longitude,
+      compass
+    }
+  }
+
+  static soilSample(sessionID: string, latitude: number, longitude: number): SoilSampleMessage {
+    return {
+      type: OutcomingMessageType.soilSample,
+      timestamp: Date.now(),
+      sessionID,
+      latitude,
+      longitude
+    }
+  }
+
+  static expressTest(sessionID, latitude: number, longitude: number, temperature: number, humidity: number, ph: number): ExpressTestMessage {
+    return {
+      type: OutcomingMessageType.expressTest,
+      timestamp: Date.now(),
+      sessionID,
+      latitude,
+      longitude,
+      temperature,
+      humidity,
+      ph
     }
   }
 }
