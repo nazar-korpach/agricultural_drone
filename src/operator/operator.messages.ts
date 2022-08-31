@@ -1,4 +1,4 @@
-export enum IncomingMessageType  {
+export enum IncomingMessageType {
   auth = 'auth',
   activeSessions = 'get_sessions',
   connectToSession = 'connect_to_session',
@@ -50,7 +50,7 @@ export interface StartMissionMessage extends IncomingMessage {
 
 export interface ActiveSessionsMessage extends OutcomingMessage {
   type: OutcomingMessageType.activeSessions
-  sessions: [deviveID:  string, sessionID: string][]
+  sessions: [deviveID: string, sessionID: string][]
 }
 
 export interface ConnectedToSessionMessage extends OutcomingMessage {

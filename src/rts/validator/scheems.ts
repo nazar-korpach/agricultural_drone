@@ -1,10 +1,10 @@
-import {IncomingMessageType as Type, IncomingMessage, AuthMessage, AcceptedMessage, TelemetryMessage, EndMessage, SoilSampleMessage, ExpressTestMessage} from "../rts-messages";
 import {JSONSchemaType} from 'ajv';
+import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, SoilSampleMessage, TelemetryMessage, IncomingMessageType as Type} from '../rts-messages';
 
 export const authSchema: JSONSchemaType<AuthMessage> = {
   type: 'object',
   properties: {
-    type: { type: 'string', const: Type.auth},
+    type: {type: 'string', const: Type.auth},
     deviceID: {type: 'string'},
     timestamp: {type: 'number'},
     latitude: {type: 'number'},
@@ -13,23 +13,23 @@ export const authSchema: JSONSchemaType<AuthMessage> = {
   },
   required: ['deviceID', 'type', 'timestamp', 'latitude', 'longitude'],
   additionalProperties: false
-}
+};
 
 export const acceptedScheema: JSONSchemaType<AcceptedMessage> = {
   type: 'object',
   properties: {
-    type: { type: 'string', const: Type.accepted},
+    type: {type: 'string', const: Type.accepted},
     timestamp: {type: 'number'},
     accepted: {type: 'boolean'}
   },
   required: ['accepted', 'type', 'timestamp'],
   additionalProperties: false
-}
+};
 
 export const telemetrySchema: JSONSchemaType<TelemetryMessage> = {
   type: 'object',
   properties: {
-    type: { type: 'string', const: Type.telemetry},
+    type: {type: 'string', const: Type.telemetry},
     timestamp: {type: 'number'},
     latitude: {type: 'number'},
     longitude: {type: 'number'},
@@ -37,7 +37,7 @@ export const telemetrySchema: JSONSchemaType<TelemetryMessage> = {
   },
   required: ['latitude', 'longitude', 'compass', 'type', 'timestamp'],
   additionalProperties: false
-}
+};
 
 export const soilSampleSchema: JSONSchemaType<SoilSampleMessage> = {
   type: 'object',
@@ -49,7 +49,7 @@ export const soilSampleSchema: JSONSchemaType<SoilSampleMessage> = {
   },
   required: ['type', 'timestamp', 'latitude', 'longitude'],
   additionalProperties: false
-}
+};
 
 export const expressTestSchema: JSONSchemaType<ExpressTestMessage> = {
   type: 'object',
@@ -64,18 +64,18 @@ export const expressTestSchema: JSONSchemaType<ExpressTestMessage> = {
   },
   required: ['type', 'timestamp', 'latitude', 'longitude', 'temperature', 'humidity', 'ph'],
   additionalProperties: false
-}
+};
 
 
 export const endOfMisssionSchema: JSONSchemaType<EndMessage> = {
   type: 'object',
   properties: {
-    type: { type: 'string', const: Type.endOfMission},
+    type: {type: 'string', const: Type.endOfMission},
     timestamp: {type: 'number'},
   },
   required: ['type', 'timestamp'],
   additionalProperties: false
-}
+};
 
 export const generalSchema: JSONSchemaType<IncomingMessage> = {
   type: 'object',
@@ -85,4 +85,4 @@ export const generalSchema: JSONSchemaType<IncomingMessage> = {
   },
   required: ['type', 'timestamp'],
   additionalProperties: true
-}
+};

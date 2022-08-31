@@ -6,7 +6,7 @@ export class OperatorMessageBuilder {
       type: OutcomingMessageType.activeSessions,
       timestamp: Date.now(),
       sessions
-    }
+    };
   }
 
   static connectedToSession(sessionID: string, succeed: boolean): ConnectedToSessionMessage {
@@ -15,7 +15,7 @@ export class OperatorMessageBuilder {
       timestamp: Date.now(),
       sessionID,
       connected: succeed
-    }
+    };
   }
 
   static missionStarted(sessionID: string, accepted: boolean): MissionStartedMessage {
@@ -24,7 +24,7 @@ export class OperatorMessageBuilder {
       timestamp: Date.now(),
       sessionID,
       accepted
-    }
+    };
   }
 
   static telemetry(sessionID, latitude: number, longitude: number, compass: number): TelemetryMessage {
@@ -35,7 +35,7 @@ export class OperatorMessageBuilder {
       latitude,
       longitude,
       compass
-    }
+    };
   }
 
   static soilSample(sessionID: string, latitude: number, longitude: number): SoilSampleMessage {
@@ -45,7 +45,7 @@ export class OperatorMessageBuilder {
       sessionID,
       latitude,
       longitude
-    }
+    };
   }
 
   static expressTest(sessionID, latitude: number, longitude: number, temperature: number, humidity: number, ph: number): ExpressTestMessage {
@@ -58,6 +58,6 @@ export class OperatorMessageBuilder {
       temperature,
       humidity,
       ph
-    }
+    };
   }
 }

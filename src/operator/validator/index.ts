@@ -1,2 +1,2 @@
 export * from './schems';
-export * from './validator'
+export * from './validator';

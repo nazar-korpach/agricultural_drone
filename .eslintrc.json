@@ -1,0 +1,75 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:import/errors",
+		"plugin:import/warnings",
+		"plugin:import/typescript"
+    ],
+    "overrides": [
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "indent": [
+            "error",
+            2
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "no-multi-spaces": "error",
+        "no-duplicate-imports": "error",
+		"@typescript-eslint/camelcase": 0,
+		"@typescript-eslint/no-explicit-any": "warn",
+		"@typescript-eslint/semi": "error",
+        "@typescript-eslint/object-curly-spacing": ["error", "never"],
+        "@typescript-eslint/space-before-blocks": "error",
+		"@typescript-eslint/no-non-null-assertion": 0,
+		"@typescript-eslint/no-unused-vars": "off",
+		"sort-imports": [
+			"warn",
+			{
+				"ignoreDeclarationSort": true
+			}
+		],
+		"import/order": [
+			"warn",
+			{
+				"pathGroups": [
+					{
+						"pattern": "@srv/**",
+						"group": "external",
+						"position": "after"
+					}
+				],
+				"groups": [
+					"builtin",
+					"external",
+					"parent",
+					"sibling",
+					"index",
+					"object"
+				],
+				"alphabetize": {
+					"order": "asc"
+				}
+			}
+		],
+        "import/no-unresolved": ["off"]
+    }
+}

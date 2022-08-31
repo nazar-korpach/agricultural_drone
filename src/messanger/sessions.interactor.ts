@@ -1,13 +1,13 @@
-import { OperatorChannel } from '@srv/operator';
-import { DroneMessanger } from './messanger';
+import {OperatorChannel} from '@srv/operator';
+import {DroneMessanger} from './messanger';
 
 export abstract class SessionsInteractor {
-  abstract getSessions(): Promise<[deviceID: string, sessionID: string][]> 
+  abstract getSessions(): Promise<[deviceID: string, sessionID: string][]>; 
 
-  abstract connect(channel: OperatorChannel, sessionID: string): Promise<void>
+  abstract connect(channel: OperatorChannel, sessionID: string): Promise<void>;
 
   static NULL() {
-    return new NullSessionsInteractor()
+    return new NullSessionsInteractor();
   }
 }
 
@@ -25,13 +25,13 @@ export class RealSessionsInteractor extends SessionsInteractor {
   connect(channel: OperatorChannel, sessionID: string) {
     return new Promise<void>((res, rej) => {
       try { 
-        this.messanger.connectOperator(channel, sessionID)
-        res()
+        this.messanger.connectOperator(channel, sessionID);
+        res();
       }
       catch(err) {
         rej(err);
       }
-    })
+    });
     
   }
 }
@@ -40,12 +40,13 @@ export class NullSessionsInteractor extends SessionsInteractor {
   constructor() {
     super();
   }
-
+  /* eslint-disable */
   getSessions(): Promise<[deviceID: string, sessionID: string][]> {
     return Promise.resolve([]);
   }
 
   connect(channel: OperatorChannel, sessionID: string) {
-    return Promise.reject()
+    return Promise.reject();
   }
+  /* eslint-enable */
 }

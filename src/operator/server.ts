@@ -1,6 +1,6 @@
 import {EventEmitter} from 'events';
-import {createServer, Server} from 'net'
-import {OperatorConnection, RealOperatorConnection} from './connection';
+import {Server, createServer} from 'net';
+import {RealOperatorConnection} from './connection';
 import {Operator} from './operator';
 
 export class OperatorServer extends EventEmitter {
@@ -23,9 +23,9 @@ export class OperatorServer extends EventEmitter {
       const connection = new RealOperatorConnection(socket);
       connection.once('auth', message => {
         // TODO add auth logic
-        console.log('operator authenticated')
+        console.log('operator authenticated');
         this.operator.connect(connection);
-      })
-    })
+      });
+    });
   } 
 }

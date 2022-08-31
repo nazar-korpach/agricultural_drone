@@ -1,9 +1,9 @@
-import { EventEmitter } from 'events';
-import { StartMissionMessage } from './operator.messages';
-import * as Device from '@srv/rts'
+import {EventEmitter} from 'events';
+import * as Device from '@srv/rts';
+import {StartMissionMessage} from './operator.messages';
 
 export class OperatorChannel extends EventEmitter {
-  sessionID: string
+  sessionID: string;
   
   constructor(id: string) {
     super();

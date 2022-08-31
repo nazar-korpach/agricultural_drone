@@ -1,17 +1,17 @@
-import { EventEmitter } from 'events';
-import { OperatorConnection } from './connection';
-import { SessionsInteractor } from '../messanger';
-import { OperatorChannel } from './channel';
-import { ChannelsRouter } from './channels.router';
+import {EventEmitter} from 'events';
+import {SessionsInteractor} from '../messanger';
+import {OperatorChannel} from './channel';
+import {ChannelsRouter} from './channels.router';
+import {OperatorConnection} from './connection';
 
 export class Operator extends EventEmitter {
-  private connection: OperatorConnection = OperatorConnection.NULL()
-  private sessionsInteractor: SessionsInteractor = SessionsInteractor.NULL()
+  private connection: OperatorConnection = OperatorConnection.NULL();
+  private sessionsInteractor: SessionsInteractor = SessionsInteractor.NULL();
 
-  private channelsRouter = new ChannelsRouter(this.connection) 
+  private channelsRouter = new ChannelsRouter(this.connection); 
 
   constructor() {
-    super()
+    super();
   }
 
   real() {
@@ -30,30 +30,30 @@ export class Operator extends EventEmitter {
 
   private setupConnection() {
     this.connection.once('close', () => {
-      this.connection = OperatorConnection.NULL()
+      this.connection = OperatorConnection.NULL();
       // TODO add correct listeners removing
-    })
+    });
 
     this.connection.on('get_sessions', () => {
       this.sessionsInteractor.getSessions()
-      .then( 
-        sessions => this.connection.sendActiveSessions(sessions) 
-      ).catch( err => console.log('getting sessions failed', err) );
-  })
+        .then( 
+          sessions => this.connection.sendActiveSessions(sessions) 
+        ).catch( err => console.log('getting sessions failed', err) );
+    });
 
     this.connection.on('connect_to_session', message => {
       const id = message.sessionID;
       const channel = new OperatorChannel(id);
 
       this.sessionsInteractor.connect(channel, id)
-      .then( () => {
-        this.channelsRouter.add(channel);
-        this.connection.sendConnectedToSession(id, true);
-      } )
-      .catch( err => {
-        console.log('connection to session failed', err)
-        this.connection.sendConnectedToSession(id, false);
-      });
-    })
+        .then( () => {
+          this.channelsRouter.add(channel);
+          this.connection.sendConnectedToSession(id, true);
+        } )
+        .catch( err => {
+          console.log('connection to session failed', err);
+          this.connection.sendConnectedToSession(id, false);
+        });
+    });
   }
 }

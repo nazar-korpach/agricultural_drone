@@ -1,37 +1,37 @@
-import {Socket} from 'net'
-import {EventEmitter} from 'events'
-import { IncomingMessage, IncomingMessageType, AuthMessage, AcceptedMessage, TelemetryMessage, EndMessage, SoilSampleMessage, ExpressTestMessage } from './rts-messages';
+import {EventEmitter} from 'events';
+import {Socket} from 'net';
 import {RTSMessageBuilder} from './message-builder';
-import {typeToValidator, generalValidator} from './validator/validator';
+import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, SoilSampleMessage, TelemetryMessage} from './rts-messages';
+import {generalValidator, typeToValidator} from './validator/validator';
 
 export class SafeChannel extends EventEmitter {  
   constructor(private socket: Socket) {
-    super()
+    super();
 
     this.socket.on('data', rawMessage => 
       this.parse(rawMessage)
-      .then( message => this.validate(message) )
-      .then( message => this.handle(message) )
-      .catch( err => this.onIvalidMessage(rawMessage, err) ));
+        .then( message => this.validate(message) )
+        .then( message => this.handle(message) )
+        .catch( err => this.onIvalidMessage(rawMessage, err) ));
   }
 
   sendMission(mission: [latitude: number, longitude: number][]) {
     this.send(RTSMessageBuilder.mission(mission));
   }
 
-  private send(message: Object) {
-    this.socket.write(Buffer.from(JSON.stringify(message)))
+  private send(message: OutcomingMessage) {
+    this.socket.write(Buffer.from(JSON.stringify(message)));
   }
 
   private sendGotInvalid(originalMessage: string, error: string) {
-    this.send(RTSMessageBuilder.invalid(originalMessage, error))
+    this.send(RTSMessageBuilder.invalid(originalMessage, error));
   }
 
   private parse(data: Buffer): Promise<IncomingMessage> {
     return new Promise<IncomingMessage>((res, rej) => {
       console.log('got row message', data.toString());
 
-      let message: IncomingMessage
+      let message: IncomingMessage;
 
       try {
         message = JSON.parse(data.toString());
@@ -42,7 +42,7 @@ export class SafeChannel extends EventEmitter {
       }
 
       res(message);
-    })
+    });
   }
 
   private validate(message: IncomingMessage) {
@@ -61,17 +61,17 @@ export class SafeChannel extends EventEmitter {
       else {
         rej(new Error(JSON.stringify(generalValidator.errors)));
       }
-    })
+    });
   }
   // TODO fix any type
   private handle(message: any) {
     console.log('got message', message);
 
     switch (message.type) {
-      case IncomingMessageType.auth: this.emit('auth', message); break; 
-      case IncomingMessageType.accepted: this.emit('accepted', message); break; 
-      case IncomingMessageType.telemetry: this.emit('telemetry', message); break;
-      case IncomingMessageType.endOfMission: this.emit('end_of_mission', message); break; 
+    case IncomingMessageType.auth: this.emit('auth', message); break; 
+    case IncomingMessageType.accepted: this.emit('accepted', message); break; 
+    case IncomingMessageType.telemetry: this.emit('telemetry', message); break;
+    case IncomingMessageType.endOfMission: this.emit('end_of_mission', message); break; 
     }
   }
 

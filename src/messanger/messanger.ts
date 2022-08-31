@@ -1,18 +1,18 @@
-import { Operator, OperatorChannel } from '@srv/operator';
-import {SafeChannel, RTServer, AuthMessage} from '../rts';
-import { Session, PendingSession } from "./session";
-import { RealSessionsInteractor, SessionsInteractor } from './sessions.interactor';
+import {Operator, OperatorChannel} from '@srv/operator';
+import {AuthMessage, RTServer, SafeChannel} from '../rts';
+import {PendingSession, Session} from './session';
+import {RealSessionsInteractor} from './sessions.interactor';
 
 const randomID = () => Math.floor(Math.random() * 2**31).toString(); 
 
 export class DroneMessanger {
-  private RTServer:  RTServer
-  private activeSessionsPool: {[id: string]: Session} = {} 
-  private pendingSessionsPool: {[id: string]: PendingSession} = {}
-  private unauthPool: Set<SafeChannel> = new Set()
+  private RTServer: RTServer;
+  private activeSessionsPool: {[id: string]: Session} = {}; 
+  private pendingSessionsPool: {[id: string]: PendingSession} = {};
+  private unauthPool: Set<SafeChannel> = new Set();
 
   constructor(RTServerPort: number, private operator: Operator) {
-    this.setupOperator()
+    this.setupOperator();
 
     this.RTServer = new RTServer(RTServerPort);
     this.RTServer.startServer();
@@ -21,7 +21,7 @@ export class DroneMessanger {
       this.unauthPool.add(channel);
 
       channel.once('auth', (message: AuthMessage) => this.onAuth(channel, message) );
-    })
+    });
   }
 
   activeSessions(): PendingSession[] {
@@ -29,7 +29,7 @@ export class DroneMessanger {
     return Object.values(this.pendingSessionsPool);
   }
 
-  connectOperator(operatorChannel:  OperatorChannel, sessionID: string) {
+  connectOperator(operatorChannel: OperatorChannel, sessionID: string) {
     if(!this.pendingSessionsPool[sessionID]) {
       throw new Error('Session with such id does not exist');
     }
@@ -39,7 +39,7 @@ export class DroneMessanger {
   }
 
   private setupOperator() {
-    this.operator.setInteractor( new RealSessionsInteractor(this) )
+    this.operator.setInteractor( new RealSessionsInteractor(this) );
   }
 
   private onAuth(channel: SafeChannel, message: AuthMessage) {

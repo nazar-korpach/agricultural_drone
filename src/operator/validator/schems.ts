@@ -1,10 +1,10 @@
-import {IncomingMessageType, IncomingMessage, AuthMessage, GetSessionsMessage, ConnectSessionMessage, StartMissionMessage} from '../operator.messages';
 import ajv, {JSONSchemaType} from 'ajv';
+import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, IncomingMessageType, StartMissionMessage} from '../operator.messages';
 
 export const partialShema: JSONSchemaType<IncomingMessage> = {
   type: 'object',
   properties: {
-    type: {type: 'string', enum: Object.values(IncomingMessageType) },
+    type: {type: 'string', enum: Object.values(IncomingMessageType)},
     timestamp: {type: 'number'}
   },
   required: ['type', 'timestamp'],
@@ -31,7 +31,7 @@ export const getSessionsSchema: JSONSchemaType<GetSessionsMessage> = {
   },
   required: ['type', 'timestamp'],
   additionalProperties: false
-}
+};
 
 export const connectSessionsSchema: JSONSchemaType<ConnectSessionMessage> = {
   type: 'object',
@@ -42,7 +42,7 @@ export const connectSessionsSchema: JSONSchemaType<ConnectSessionMessage> = {
   },
   required: ['type', 'timestamp', 'sessionID'],
   additionalProperties: false
-}
+};
 
 export const startMissionSchema: JSONSchemaType<StartMissionMessage> = {
   type: 'object',
@@ -61,4 +61,4 @@ export const startMissionSchema: JSONSchemaType<StartMissionMessage> = {
   },
   required: ['type', 'timestamp', 'sessionID', 'coords'],
   additionalProperties: false
-}
+};

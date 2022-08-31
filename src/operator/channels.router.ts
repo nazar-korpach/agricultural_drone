@@ -1,5 +1,5 @@
-import { OperatorChannel } from "./channel";
-import { OperatorConnection } from "./connection";
+import {OperatorChannel} from './channel';
+import {OperatorConnection} from './connection';
 
 export class ChannelsRouter {
   private channelsPool: Map<string, OperatorChannel> = new Map();
@@ -26,23 +26,23 @@ export class ChannelsRouter {
         message.latitude,
         message.longitude,
         message.compass
-      )
+      );
     });
 
     channel.on('mission_started', message => {
       this.connection.sendMissionStarted(
         channel.sessionID,
         message.accepted
-      )
-    })
+      );
+    });
 
     channel.on('soil_sample', message => {
       this.connection.sendSoilSample(
         channel.sessionID,
         message.latitude,
         message.longitude
-      )
-    })
+      );
+    });
 
     channel.on('express_test', message => {
       this.connection.sendExpressTest(
@@ -52,8 +52,8 @@ export class ChannelsRouter {
         message.temperature,
         message.humidity,
         message.ph   
-      )
-    })
+      );
+    });
   }
 
   private setupConnection(connection: OperatorConnection) {
@@ -66,7 +66,7 @@ export class ChannelsRouter {
         return;
       }
 
-      this.channelsPool.get(id)?.emit('start_mission', message)
-    })
+      this.channelsPool.get(id)?.emit('start_mission', message);
+    });
   }
 }

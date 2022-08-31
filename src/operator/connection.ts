@@ -1,25 +1,25 @@
 import EventEmitter from 'events';
 import {Socket} from 'net';
-import { OperatorMessageBuilder } from './message.builder';
-import { IncomingMessage, IncomingMessageType, AuthMessage, ConnectSessionMessage, GetSessionsMessage, StartMissionMessage } from './operator.messages';
-import { typeToValidator, partialValidator } from './validator';
+import {OperatorMessageBuilder} from './message.builder';
+import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, StartMissionMessage} from './operator.messages';
+import {partialValidator, typeToValidator} from './validator';
 
-export abstract class OperatorConnection extends EventEmitter{
+export abstract class OperatorConnection extends EventEmitter {
   constructor() {
     super();
   }
 
-  abstract real(): boolean
+  abstract real(): boolean;
 
-  abstract sendActiveSessions(sessions: [deviveID:  string, sessionID: string][])
-  abstract sendConnectedToSession(sessionID: string, succeed: boolean)
-  abstract sendMissionStarted(sessionID: string, accepted: boolean)
-  abstract sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number)
-  abstract sendSoilSample(sessionID: string, latitude: number, longitude: number)
-  abstract sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number)
+  abstract sendActiveSessions(sessions: [deviveID: string, sessionID: string][]);
+  abstract sendConnectedToSession(sessionID: string, succeed: boolean);
+  abstract sendMissionStarted(sessionID: string, accepted: boolean);
+  abstract sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number);
+  abstract sendSoilSample(sessionID: string, latitude: number, longitude: number);
+  abstract sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number);
 
   static NULL() {
-    return new NullOperatorConnection()
+    return new NullOperatorConnection();
   }
 }
 
@@ -29,27 +29,29 @@ export class RealOperatorConnection extends OperatorConnection {
 
     this.socket.on('data', rawMessage => 
       this.parse(rawMessage)
-      .then( message => this.validate(message) )
-      .then( message => this.handle(message) )
-      .catch( err => this.onIvalidMessage(rawMessage, err) ));
+        .then( message => this.validate(message) )
+        .then( message => this.handle(message) )
+        .catch( err => this.onIvalidMessage(rawMessage, err) ));
 
-    this.socket.on('close', () => this.close())
+    this.socket.on('close', () => this.close());
 
-    this.socket.on('error', err => {})
+    this.socket.on('error', err => {
+      console.log('socket err', err);
+    });
   }
 
-  real() {return true}
+  real() {return true;}
 
-  sendActiveSessions(sessions: [deviveID:  string, sessionID: string][]) {
-    this.send(OperatorMessageBuilder.activeSessions(sessions))
+  sendActiveSessions(sessions: [deviveID: string, sessionID: string][]) {
+    this.send(OperatorMessageBuilder.activeSessions(sessions));
   }
 
   sendConnectedToSession(sessionID: string, succeed: boolean) {
-    this.send(OperatorMessageBuilder.connectedToSession(sessionID, succeed))
+    this.send(OperatorMessageBuilder.connectedToSession(sessionID, succeed));
   }
 
   sendMissionStarted(sessionID: string, accepted: boolean) {
-    this.send(OperatorMessageBuilder.missionStarted(sessionID, accepted))
+    this.send(OperatorMessageBuilder.missionStarted(sessionID, accepted));
   }
 
   sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number) {
@@ -58,7 +60,7 @@ export class RealOperatorConnection extends OperatorConnection {
       latitude,
       longitude,
       compass,
-    ))
+    ));
   }
 
   sendSoilSample(sessionID: string, latitude: number, longitude: number) {
@@ -66,7 +68,7 @@ export class RealOperatorConnection extends OperatorConnection {
       sessionID,
       latitude,
       longitude
-    ))
+    ));
   }
 
   sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number) {
@@ -77,27 +79,28 @@ export class RealOperatorConnection extends OperatorConnection {
       temperature,
       humidity,
       ph
-    ))
+    ));
   }
 
-  private send(message: Object) {
-    console.log('sent', JSON.stringify(message))
-    this.socket.write(Buffer.from(JSON.stringify(message)))
+  private send(message: OutcomingMessage) {
+    console.log('sent', JSON.stringify(message));
+    this.socket.write(Buffer.from(JSON.stringify(message)));
   }
 
   private sendGotInvalid(originalMessage: string, error: string) {
+    throw new Error('Unimplemented method');
   }
 
   private close() {
-    console.log('operator connection closed')
-    this.emit('close')
+    console.log('operator connection closed');
+    this.emit('close');
   }
 
   private parse(data: Buffer): Promise<IncomingMessage> {
     return new Promise<IncomingMessage>((res, rej) => {
       console.log('got row message', data.toString());
 
-      let message: IncomingMessage
+      let message: IncomingMessage;
 
       try {
         message = JSON.parse(data.toString());
@@ -108,7 +111,7 @@ export class RealOperatorConnection extends OperatorConnection {
       }
 
       res(message);
-    })
+    });
   }
 
   private validate(message: IncomingMessage) {
@@ -127,17 +130,15 @@ export class RealOperatorConnection extends OperatorConnection {
       else {
         rej(new Error(JSON.stringify(partialValidator.errors)));
       }
-    })
+    });
   }
   // TODO fix any type
   private handle(message: any) {
-    if(message.type === 'start_mission') console.log('EVRIIICA');
-
     switch (message.type) {
-      case IncomingMessageType.auth: this.emit('auth', message); break;
-      case IncomingMessageType.activeSessions: this.emit('get_sessions', message); break;
-      case IncomingMessageType.connectToSession: this.emit('connect_to_session', message); break;
-      case IncomingMessageType.startMission: this.emit('start_mission', message); break
+    case IncomingMessageType.auth: this.emit('auth', message); break;
+    case IncomingMessageType.activeSessions: this.emit('get_sessions', message); break;
+    case IncomingMessageType.connectToSession: this.emit('connect_to_session', message); break;
+    case IncomingMessageType.startMission: this.emit('start_mission', message); break;
     }
   }
 
@@ -152,7 +153,7 @@ export class RealOperatorConnection extends OperatorConnection {
 export declare interface OperatorConnection {
   emit(event: 'auth', message: AuthMessage): boolean;
   emit(event: 'get_sessions', message: GetSessionsMessage): boolean
-  emit(event: 'connect_to_session', message: ConnectSessionMessage):  boolean
+  emit(event: 'connect_to_session', message: ConnectSessionMessage): boolean
   emit(event: 'start_mission', message: StartMissionMessage): boolean
   emit(event: 'close'): boolean
 
@@ -165,12 +166,14 @@ export declare interface OperatorConnection {
 }
 
 export class NullOperatorConnection extends OperatorConnection {
-  real() {return false}
+  real() {return false;}
 
+  /* eslint-disable */
   sendActiveSessions(sessions: [deviveID:  string, sessionID: string][]) {}
   sendConnectedToSession(sessionID: string, succeed: boolean) {}
   sendMissionStarted(sessionID: string, accepted: boolean) {}
   sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number) {}
   sendSoilSample(sessionID: string, latitude: number, longitude: number) {}
   sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number) {}
+  /* eslint-enable */
 }

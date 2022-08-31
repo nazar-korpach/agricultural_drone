@@ -1,6 +1,6 @@
-import {partialShema, authShema, getSessionsSchema, connectSessionsSchema, startMissionSchema} from './schems'
 import Ajv, {ValidateFunction} from 'ajv';
-import { IncomingMessageType as Type, AuthMessage, IncomingMessage, GetSessionsMessage, ConnectSessionMessage, StartMissionMessage } from '../operator.messages';
+import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, StartMissionMessage, IncomingMessageType as Type} from '../operator.messages';
+import {authShema, connectSessionsSchema, getSessionsSchema, partialShema, startMissionSchema} from './schems';
 
 const ajv = new Ajv();
 
@@ -15,4 +15,4 @@ export const typeToValidator: {[id in Type]: ValidateFunction} = {
   [Type.activeSessions]: getSessionsValidator,
   [Type.connectToSession]: connectSessionsValidator,
   [Type.startMission]: startMissionValidator
-}
+};

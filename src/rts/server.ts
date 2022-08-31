@@ -18,7 +18,7 @@ export class RTServer extends EventEmitter {
   startServer() {
     this.srv.listen(this.port, () => console.log('tcp server is running'));
 
-    this.srv.on('connection', socket =>  {
+    this.srv.on('connection', socket => {
       console.log('connected');
       const channel = new SafeChannel(socket);
       this.emit('connection', channel);
