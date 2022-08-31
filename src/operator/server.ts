@@ -8,7 +8,7 @@ export class OperatorServer extends EventEmitter {
   
   operator: Operator = new Operator();
 
-  constructor(port) {
+  constructor(port: number) {
     super();
 
     this.server.listen(port, () => console.log(`operearot server is running on ${port} port`));
