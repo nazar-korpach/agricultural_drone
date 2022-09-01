@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:18-alpine
 
 WORKDIR /app
 
@@ -12,5 +12,9 @@ RUN npm install
 RUN npm run build
 
 EXPOSE 3000
+EXPOSE 3001
+
+ENV DRONE_PORT=3000
+ENV OPERATOR_PORT=3001
 
 CMD [ "npm", "run", "run"]
