@@ -14,7 +14,8 @@
 		"strictNullChecks": true,
 		"baseUrl": "./",
 		"paths": {
-			"@srv/*": ["src/*", "dist/*"]
+			"@srv/*": ["src/*", "dist/*"],
+			"@protocol/*": ["src/protocol/*", "dist/protocol/*"],
 		},
 		"incremental": true,
 		"sourceMap": true

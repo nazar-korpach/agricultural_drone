@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import {Socket} from 'net';
+import {AssemblingSocket} from '@protocol/assembler';
 import {OperatorMessageBuilder} from './message.builder';
 import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, StartMissionMessage} from './operator.messages';
 import {partialValidator, typeToValidator} from './validator';
@@ -24,18 +24,18 @@ export abstract class OperatorConnection extends EventEmitter {
 }
 
 export class RealOperatorConnection extends OperatorConnection {  
-  constructor(private socket: Socket) {
+  constructor(private channel: AssemblingSocket) {
     super();
 
-    this.socket.on('data', rawMessage => 
+    this.channel.on('message', rawMessage => 
       this.parse(rawMessage)
         .then( message => this.validate(message) )
         .then( message => this.handle(message) )
         .catch( err => this.onIvalidMessage(rawMessage, err) ));
 
-    this.socket.on('close', () => this.close());
+    this.channel.once('close', () => this.close());
 
-    this.socket.on('error', err => {
+    this.channel.once('error', err => {
       console.log('socket err', err);
     });
   }
@@ -84,7 +84,7 @@ export class RealOperatorConnection extends OperatorConnection {
 
   private send(message: OutcomingMessage) {
     console.log('sent', JSON.stringify(message));
-    this.socket.write(Buffer.from(JSON.stringify(message)));
+    this.channel.send(Buffer.from(JSON.stringify(message)));
   }
 
   private sendGotInvalid(originalMessage: string, error: string) {
