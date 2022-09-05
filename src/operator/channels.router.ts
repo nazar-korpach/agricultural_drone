@@ -54,6 +54,15 @@ export class ChannelsRouter {
         message.ph   
       );
     });
+
+    channel.on('video_frame', message => {
+      this.connection.sendVideoFrame(
+        channel.sessionID,
+        message.width,
+        message.height,
+        message.frame
+      );
+    });
   }
 
   private setupConnection(connection: OperatorConnection) {

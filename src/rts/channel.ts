@@ -1,14 +1,15 @@
 import {EventEmitter} from 'events';
 import {Socket} from 'net';
+import {AssemblingSocket} from '@srv/protocol';
 import {RTSMessageBuilder} from './message-builder';
-import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, SoilSampleMessage, TelemetryMessage} from './rts-messages';
+import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, SoilSampleMessage, TelemetryMessage, VideoFrameMessage} from './rts-messages';
 import {generalValidator, typeToValidator} from './validator/validator';
 
 export class SafeChannel extends EventEmitter {  
-  constructor(private socket: Socket) {
+  constructor(private socket: AssemblingSocket) {
     super();
 
-    this.socket.on('data', rawMessage => 
+    this.socket.on('message', rawMessage => 
       this.parse(rawMessage)
         .then( message => this.validate(message) )
         .then( message => this.handle(message) )
@@ -20,7 +21,7 @@ export class SafeChannel extends EventEmitter {
   }
 
   private send(message: OutcomingMessage) {
-    this.socket.write(Buffer.from(JSON.stringify(message)));
+    this.socket.send(Buffer.from(JSON.stringify(message)));
   }
 
   private sendGotInvalid(originalMessage: string, error: string) {
@@ -29,7 +30,7 @@ export class SafeChannel extends EventEmitter {
 
   private parse(data: Buffer): Promise<IncomingMessage> {
     return new Promise<IncomingMessage>((res, rej) => {
-      console.log('got row message', data.toString());
+      // console.log('got row message', data.toString());
 
       let message: IncomingMessage;
 
@@ -65,12 +66,13 @@ export class SafeChannel extends EventEmitter {
   }
   // TODO fix any type
   private handle(message: any) {
-    console.log('got message', message);
+    console.log('got message', message.type);
 
     switch (message.type) {
     case IncomingMessageType.auth: this.emit('auth', message); break; 
     case IncomingMessageType.accepted: this.emit('accepted', message); break; 
     case IncomingMessageType.telemetry: this.emit('telemetry', message); break;
+    case IncomingMessageType.videoFrame: this.emit('video_frame', message); break;
     case IncomingMessageType.endOfMission: this.emit('end_of_mission', message); break; 
     }
   }
@@ -91,6 +93,7 @@ export declare interface SafeChannel {
   emit(event: 'telemetry', message: TelemetryMessage): boolean;
   emit(event: 'soil_sample', message: SoilSampleMessage): boolean;
   emit(event: 'express_test', message: ExpressTestMessage): boolean;
+  emit(event: 'video_frame', message: VideoFrameMessage): boolean;
   emit(event: 'end_of_mission', message: EndMessage): boolean;
 
   on(message: 'invalid_message', listener: (message: string) => void): this;
@@ -98,6 +101,7 @@ export declare interface SafeChannel {
   on(message: 'accepted', listener: (message: AcceptedMessage) => void): this;
   on(message: 'telemetry', listener: (message: TelemetryMessage) => void): this;
   on(message: 'soil_sample', listener: (message: SoilSampleMessage) => void): this;
-  on(message: 'express_test', listener: (message: ExpressTestMessage) => void): this;  
+  on(message: 'express_test', listener: (message: ExpressTestMessage) => void): this;
+  on(message: 'video_frame', listener: (message: VideoFrameMessage) => void): this;
   on(message: 'end_of_mission', listener: (message: EndMessage) => void): this;
 }

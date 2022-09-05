@@ -17,6 +17,7 @@ export abstract class OperatorConnection extends EventEmitter {
   abstract sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number);
   abstract sendSoilSample(sessionID: string, latitude: number, longitude: number);
   abstract sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number);
+  abstract sendVideoFrame(sessionID: string, width: number, height: number, frame: string);
 
   static NULL() {
     return new NullOperatorConnection();
@@ -80,6 +81,10 @@ export class RealOperatorConnection extends OperatorConnection {
       humidity,
       ph
     ));
+  }
+
+  sendVideoFrame(sessionID: string, width: number, height: number, frame: string) {
+    this.send(OperatorMessageBuilder.videoFrame(sessionID, width, height, frame));
   }
 
   private send(message: OutcomingMessage) {
@@ -175,5 +180,6 @@ export class NullOperatorConnection extends OperatorConnection {
   sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number) {}
   sendSoilSample(sessionID: string, latitude: number, longitude: number) {}
   sendExpressTest(sessionID: string, latitude: number, longitude: number, temperature: number, humidity: number, ph: number) {}
+  sendVideoFrame(sessionID: string, width: number, height: number, frame: string) {}
   /* eslint-enable */
 }

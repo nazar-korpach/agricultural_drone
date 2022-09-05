@@ -4,7 +4,8 @@ export enum IncomingMessageType {
   telemetry = 'common_telemetry',
   endOfMission = 'end_of_mission',
   soilSample = 'soil_sample',
-  expressTest = 'express_test'
+  expressTest = 'express_test',
+  videoFrame = 'video_frame'
 }
 
 export enum OutcomingMessageType {
@@ -59,6 +60,13 @@ export interface ExpressTestMessage extends IncomingMessage {
   temperature: number
   humidity: number
   ph: number
+}
+
+export interface VideoFrameMessage extends IncomingMessage {
+  type: IncomingMessageType.videoFrame
+  width: number
+  height: number
+  frame: string
 }
 
 export interface EndMessage extends IncomingMessage {

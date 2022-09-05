@@ -19,6 +19,7 @@ export class Session {
     this.deviceChannel.on('telemetry', message => this.operatorChannel.emit('telemetry', message));
     this.deviceChannel.on('soil_sample', message => this.operatorChannel.emit('soil_sample', message));
     this.deviceChannel.on('express_test', message => this.operatorChannel.emit('express_test', message));
+    this.deviceChannel.on('video_frame', message => this.operatorChannel.emit('video_frame', message));
     this.deviceChannel.on('end_of_mission', message => console.log('got ', message));
   }
 

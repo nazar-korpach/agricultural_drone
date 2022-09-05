@@ -11,7 +11,8 @@ export enum OutcomingMessageType {
   missionStarted = 'mission_recived',
   telemetry = 'common_telemetry',
   soilSample = 'soil_sample',
-  expressTest = 'express_test'
+  expressTest = 'express_test',
+  videoFrame = 'video_frame'
 }
 
 export interface OperatorMessage {
@@ -88,4 +89,12 @@ export interface ExpressTestMessage extends OutcomingMessage {
   temperature: number
   humidity: number
   ph: number
+}
+
+export interface VideoFrameMessage extends OutcomingMessage {
+  type: OutcomingMessageType.videoFrame
+  sessionID: string
+  width: number
+  height: number
+  frame: string
 }

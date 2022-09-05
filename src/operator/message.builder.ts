@@ -1,4 +1,4 @@
-import {ActiveSessionsMessage, ConnectedToSessionMessage, ExpressTestMessage, MissionStartedMessage, OutcomingMessageType, SoilSampleMessage, TelemetryMessage} from './operator.messages';
+import {ActiveSessionsMessage, ConnectedToSessionMessage, ExpressTestMessage, MissionStartedMessage, OutcomingMessageType, SoilSampleMessage, TelemetryMessage, VideoFrameMessage} from './operator.messages';
 
 export class OperatorMessageBuilder {
   static activeSessions(sessions: [deviveID: string, sessionID: string][]): ActiveSessionsMessage {
@@ -58,6 +58,17 @@ export class OperatorMessageBuilder {
       temperature,
       humidity,
       ph
+    };
+  }
+
+  static videoFrame(sessionID: string, width: number, height: number, frame: string): VideoFrameMessage {
+    return {
+      type: OutcomingMessageType.videoFrame,
+      timestamp: Date.now(),
+      sessionID,
+      width,
+      height,
+      frame
     };
   }
 }

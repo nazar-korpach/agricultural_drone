@@ -18,6 +18,7 @@ export declare interface OperatorChannel {
   emit(event: 'mission_started', message: Device.AcceptedMessage): boolean
   emit(event: 'soil_sample', message: Device.SoilSampleMessage): boolean
   emit(event: 'express_test', message: Device.ExpressTestMessage): boolean
+  emit(event: 'video_frame', message: Device.VideoFrameMessage): boolean
 
   on(event: 'start_mission', listener: (message: StartMissionMessage) => void): this;
 
@@ -25,4 +26,5 @@ export declare interface OperatorChannel {
   on(event: 'mission_started', listener: (message: Device.AcceptedMessage) => void): this
   on(event: 'soil_sample', listener: (message: Device.SoilSampleMessage) => void): this
   on(event: 'express_test', listener: (message: Device.ExpressTestMessage) => void): this
+  on(event: 'video_frame', listener: (message: Device.VideoFrameMessage) => void): this
 }

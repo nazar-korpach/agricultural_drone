@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 import {Server, createServer} from 'net';
+import {AssemblingSocket} from '../protocol';
 import {SafeChannel} from './channel';
 
 export declare interface RTServer {
@@ -20,7 +21,7 @@ export class RTServer extends EventEmitter {
 
     this.srv.on('connection', socket => {
       console.log('connected');
-      const channel = new SafeChannel(socket);
+      const channel = new SafeChannel(new AssemblingSocket(socket));
       this.emit('connection', channel);
     });
   }

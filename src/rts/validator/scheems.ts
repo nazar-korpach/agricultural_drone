@@ -1,5 +1,5 @@
 import {JSONSchemaType} from 'ajv';
-import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, SoilSampleMessage, TelemetryMessage, IncomingMessageType as Type} from '../rts-messages';
+import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, SoilSampleMessage, TelemetryMessage, IncomingMessageType as Type, VideoFrameMessage} from '../rts-messages';
 
 export const authSchema: JSONSchemaType<AuthMessage> = {
   type: 'object',
@@ -66,6 +66,18 @@ export const expressTestSchema: JSONSchemaType<ExpressTestMessage> = {
   additionalProperties: false
 };
 
+export const videoFrameSchema: JSONSchemaType<VideoFrameMessage> = {
+  type: 'object',
+  properties: {
+    type: {type: 'string', const: Type.videoFrame},
+    timestamp: {type: 'number'},
+    height: {type: 'number'},
+    width: {type: 'number'},
+    frame: {type: 'string'}
+  },
+  required: ['type', 'timestamp', 'height', 'width', 'frame'],
+  additionalProperties: false
+};
 
 export const endOfMisssionSchema: JSONSchemaType<EndMessage> = {
   type: 'object',
