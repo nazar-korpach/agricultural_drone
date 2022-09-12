@@ -1,11 +1,10 @@
 import {EventEmitter} from 'events';
-import {Socket} from 'net';
 import {AssemblingSocket} from '@srv/protocol';
 import {RTSMessageBuilder} from './message-builder';
 import {AcceptedMessage, AuthMessage, EndMessage, ExpressTestMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, SoilSampleMessage, TelemetryMessage, VideoFrameMessage} from './rts-messages';
 import {generalValidator, typeToValidator} from './validator/validator';
 
-export class SafeChannel extends EventEmitter {  
+export class SafeChannel extends EventEmitter implements DroneChannel {  
   constructor(private socket: AssemblingSocket) {
     super();
 
@@ -30,8 +29,6 @@ export class SafeChannel extends EventEmitter {
 
   private parse(data: Buffer): Promise<IncomingMessage> {
     return new Promise<IncomingMessage>((res, rej) => {
-      // console.log('got row message', data.toString());
-
       let message: IncomingMessage;
 
       try {
@@ -86,7 +83,9 @@ export class SafeChannel extends EventEmitter {
 
 }
 
-export declare interface SafeChannel {
+export declare interface DroneChannel {
+  sendMission(mission: [latitude: number, longitude: number][]): void
+
   emit(event: 'invalid_message', message: string): boolean;
   emit(event: 'auth', message: AuthMessage): boolean;
   emit(event: 'accepted', message: AcceptedMessage): boolean;

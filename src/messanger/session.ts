@@ -1,12 +1,12 @@
 import {OperatorChannel} from '@srv/operator';
-import {SafeChannel} from '@srv/rts';
+import {DroneChannel} from '@srv/rts';
 import {SessionInfo} from './session.info';
 
 export class Session {
   id: string;
   deviceID: string;
 
-  constructor(private deviceChannel: SafeChannel, private operatorChannel: OperatorChannel, id: string, deviceID: string) {
+  constructor(private deviceChannel: DroneChannel, private operatorChannel: OperatorChannel, id: string, deviceID: string) {
     this.id = id;
     this.deviceID = deviceID;
 
@@ -44,7 +44,7 @@ export class PendingSession {
   id: string;
   deviceID: string;
 
-  constructor(private deviceChannel: SafeChannel, id: string, deviceID: string) {
+  constructor(private deviceChannel: DroneChannel, id: string, deviceID: string) {
     this.id = id;
     this.deviceID = deviceID;
 
