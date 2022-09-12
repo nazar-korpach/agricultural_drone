@@ -1,8 +1,9 @@
 import {OperatorChannel} from '@srv/operator';
 import {DroneMessanger} from './messanger';
+import { SessionInfo } from './session.info';
 
 export abstract class SessionsInteractor {
-  abstract getSessions(): Promise<[deviceID: string, sessionID: string][]>; 
+  abstract getSessions(): Promise<SessionInfo[]>; 
 
   abstract connect(channel: OperatorChannel, sessionID: string): Promise<void>;
 
@@ -16,9 +17,9 @@ export class RealSessionsInteractor extends SessionsInteractor {
     super();
   }
 
-  getSessions(): Promise<[deviceID: string, sessionID: string][]> {
+  getSessions(): Promise<SessionInfo[]> {
     return new Promise((res, rej) => {
-      res(this.messanger.activeSessions().map( session => [session.deviceID, session.id]));
+      res(this.messanger.activeSessions());
     });
   }
 
@@ -41,7 +42,7 @@ export class NullSessionsInteractor extends SessionsInteractor {
     super();
   }
   /* eslint-disable */
-  getSessions(): Promise<[deviceID: string, sessionID: string][]> {
+  getSessions(): Promise<SessionInfo[]> {
     return Promise.resolve([]);
   }
 

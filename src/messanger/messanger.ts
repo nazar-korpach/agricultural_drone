@@ -1,6 +1,7 @@
 import {Operator, OperatorChannel} from '@srv/operator';
 import {AuthMessage, RTServer, SafeChannel} from '../rts';
 import {PendingSession, Session} from './session';
+import { SessionInfo } from './session.info';
 import {RealSessionsInteractor} from './sessions.interactor';
 
 const randomID = () => Math.floor(Math.random() * 2**31).toString(); 
@@ -24,9 +25,15 @@ export class DroneMessanger {
     });
   }
 
-  activeSessions(): PendingSession[] {
-    // TODO fix
-    return Object.values(this.pendingSessionsPool);
+  activeSessions(): SessionInfo[] {
+    return [
+      ...Object.values(this.pendingSessionsPool)
+      .map( session => session.info()),
+
+      ...Object.values(this.activeSessionsPool)
+        .map( session => session.info())
+    ]
+    
   }
 
   connectOperator(operatorChannel: OperatorChannel, sessionID: string) {

@@ -51,7 +51,11 @@ export interface StartMissionMessage extends IncomingMessage {
 
 export interface ActiveSessionsMessage extends OutcomingMessage {
   type: OutcomingMessageType.activeSessions
-  sessions: [deviveID: string, sessionID: string][]
+  sessions: {
+    sessionID: string
+    deviceID: string
+    status: 'active' | 'online' | 'offline'
+  }[],
 }
 
 export interface ConnectedToSessionMessage extends OutcomingMessage {

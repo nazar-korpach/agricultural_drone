@@ -3,6 +3,7 @@ import {AssemblingSocket} from '@protocol/assembler';
 import {OperatorMessageBuilder} from './message.builder';
 import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, StartMissionMessage} from './operator.messages';
 import {partialValidator, typeToValidator} from './validator';
+import { SessionInfo } from '@srv/messanger/session.info';
 
 export abstract class OperatorConnection extends EventEmitter {
   constructor() {
@@ -11,7 +12,7 @@ export abstract class OperatorConnection extends EventEmitter {
 
   abstract real(): boolean;
 
-  abstract sendActiveSessions(sessions: [deviveID: string, sessionID: string][]);
+  abstract sendActiveSessions(sessions: SessionInfo[]);
   abstract sendConnectedToSession(sessionID: string, succeed: boolean);
   abstract sendMissionStarted(sessionID: string, accepted: boolean);
   abstract sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number);
@@ -43,7 +44,7 @@ export class RealOperatorConnection extends OperatorConnection {
 
   real() {return true;}
 
-  sendActiveSessions(sessions: [deviveID: string, sessionID: string][]) {
+  sendActiveSessions(sessions: SessionInfo[]) {
     this.send(OperatorMessageBuilder.activeSessions(sessions));
   }
 
@@ -84,16 +85,16 @@ export class RealOperatorConnection extends OperatorConnection {
   }
 
   sendVideoFrame(sessionID: string, width: number, height: number, frame: string) {
+    console.log('sent frame')
     this.send(OperatorMessageBuilder.videoFrame(sessionID, width, height, frame));
   }
 
   private send(message: OutcomingMessage) {
-    console.log('sent', JSON.stringify(message));
-    this.channel.send(Buffer.from(JSON.stringify(message)));
+    this.channel.send(Buffer.from(JSON.stringify(message), 'ascii'));
   }
 
   private sendGotInvalid(originalMessage: string, error: string) {
-    throw new Error('Unimplemented method');
+    console.error('operator got invalid message', error);
   }
 
   private close() {
@@ -174,7 +175,7 @@ export class NullOperatorConnection extends OperatorConnection {
   real() {return false;}
 
   /* eslint-disable */
-  sendActiveSessions(sessions: [deviveID:  string, sessionID: string][]) {}
+  sendActiveSessions(sessions: SessionInfo[]) {}
   sendConnectedToSession(sessionID: string, succeed: boolean) {}
   sendMissionStarted(sessionID: string, accepted: boolean) {}
   sendTelemetry(sessionID: string, latitude: number, longitude: number, compass: number) {}

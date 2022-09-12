@@ -1,7 +1,7 @@
 import {ActiveSessionsMessage, ConnectedToSessionMessage, ExpressTestMessage, MissionStartedMessage, OutcomingMessageType, SoilSampleMessage, TelemetryMessage, VideoFrameMessage} from './operator.messages';
 
 export class OperatorMessageBuilder {
-  static activeSessions(sessions: [deviveID: string, sessionID: string][]): ActiveSessionsMessage {
+  static activeSessions(sessions: {sessionID: string, deviceID: string, status: 'active' | 'online' | 'offline'}[]): ActiveSessionsMessage {
     return {
       type: OutcomingMessageType.activeSessions,
       timestamp: Date.now(),

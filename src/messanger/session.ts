@@ -1,5 +1,6 @@
 import {OperatorChannel} from '@srv/operator';
 import {SafeChannel} from '@srv/rts';
+import { SessionInfo } from './session.info';
 
 export class Session {
   id: string;
@@ -11,7 +12,15 @@ export class Session {
 
     this.setupDeviceChannel();
     this.setupOperatorChannel();
-    console.log('created session');
+    console.log('created active session', id);
+  }
+
+  info(): SessionInfo {
+    return {
+      sessionID: this.id,
+      deviceID: this.deviceID,
+      status: 'active'
+    }
   }
 
   private setupDeviceChannel() {
@@ -39,7 +48,15 @@ export class PendingSession {
     this.id = id;
     this.deviceID = deviceID;
 
-    console.log('created session');
+    console.log('created pending session', id);
+  }
+
+  info(): SessionInfo {
+    return {
+      sessionID: this.id,
+      deviceID: this.deviceID,
+      status: 'online'
+    }
   }
 
   activate(operatorChannel: OperatorChannel): Session {
