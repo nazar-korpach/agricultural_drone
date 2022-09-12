@@ -1,9 +1,9 @@
 import EventEmitter from 'events';
 import {AssemblingSocket} from '@protocol/assembler';
+import {SessionInfo} from '@srv/messanger/session.info';
 import {OperatorMessageBuilder} from './message.builder';
 import {AuthMessage, ConnectSessionMessage, GetSessionsMessage, IncomingMessage, IncomingMessageType, OutcomingMessage, StartMissionMessage} from './operator.messages';
 import {partialValidator, typeToValidator} from './validator';
-import { SessionInfo } from '@srv/messanger/session.info';
 
 export abstract class OperatorConnection extends EventEmitter {
   constructor() {
@@ -85,7 +85,7 @@ export class RealOperatorConnection extends OperatorConnection {
   }
 
   sendVideoFrame(sessionID: string, width: number, height: number, frame: string) {
-    console.log('sent frame')
+    console.log('sent frame');
     this.send(OperatorMessageBuilder.videoFrame(sessionID, width, height, frame));
   }
 

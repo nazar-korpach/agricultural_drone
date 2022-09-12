@@ -1,6 +1,6 @@
 import {OperatorChannel} from '@srv/operator';
 import {DroneMessanger} from './messanger';
-import { SessionInfo } from './session.info';
+import {SessionInfo} from './session.info';
 
 export abstract class SessionsInteractor {
   abstract getSessions(): Promise<SessionInfo[]>; 

@@ -1,6 +1,6 @@
 import {OperatorChannel} from '@srv/operator';
 import {SafeChannel} from '@srv/rts';
-import { SessionInfo } from './session.info';
+import {SessionInfo} from './session.info';
 
 export class Session {
   id: string;
@@ -20,7 +20,7 @@ export class Session {
       sessionID: this.id,
       deviceID: this.deviceID,
       status: 'active'
-    }
+    };
   }
 
   private setupDeviceChannel() {
@@ -56,7 +56,7 @@ export class PendingSession {
       sessionID: this.id,
       deviceID: this.deviceID,
       status: 'online'
-    }
+    };
   }
 
   activate(operatorChannel: OperatorChannel): Session {
