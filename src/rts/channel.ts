@@ -13,6 +13,15 @@ export class SafeChannel extends EventEmitter implements DroneChannel {
         .then( message => this.validate(message) )
         .then( message => this.handle(message) )
         .catch( err => this.onIvalidMessage(rawMessage, err) ));
+
+    this.socket.once('error', error => {
+      console.error('error in drone connection', error)
+    });
+
+    this.socket.once('close', () => {
+      console.log('drone connection closed')
+      this.emit('close');
+    })
   }
 
   sendMission(mission: [latitude: number, longitude: number][]) {
@@ -86,6 +95,8 @@ export class SafeChannel extends EventEmitter implements DroneChannel {
 export declare interface DroneChannel {
   sendMission(mission: [latitude: number, longitude: number][]): void
 
+  emit(event: 'error', error: Error): void;
+  emit(event: 'close'): void;
   emit(event: 'invalid_message', message: string): boolean;
   emit(event: 'auth', message: AuthMessage): boolean;
   emit(event: 'accepted', message: AcceptedMessage): boolean;
@@ -94,6 +105,9 @@ export declare interface DroneChannel {
   emit(event: 'express_test', message: ExpressTestMessage): boolean;
   emit(event: 'video_frame', message: VideoFrameMessage): boolean;
   emit(event: 'end_of_mission', message: EndMessage): boolean;
+
+  once(message: 'error', listener: (error: Error) => void): this;
+  once(message: 'close', listener: () => void): this;
 
   on(message: 'invalid_message', listener: (message: string) => void): this;
   on(message: 'auth', listener: (message: AuthMessage) => void): this;
