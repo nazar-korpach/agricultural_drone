@@ -1,16 +1,16 @@
 import {EventEmitter} from 'events';
-import {DroneChannel, SafeChannel} from './channel';
+import {DroneChannel} from './channel';
 
 export class DroneChannelsBand extends EventEmitter implements DroneChannel {
-  private channels: SafeChannel[] = [];
+  private channels: DroneChannel[] = [];
 
-  constructor(...channels: SafeChannel[]) {
+  constructor(...channels: DroneChannel[]) {
     super();
 
     channels?.forEach(channel => this.add(channel));
   }
 
-  add(channel: SafeChannel) {
+  add(channel: DroneChannel) {
     this.setupChannel(channel);
     this.channels.push(channel);
   }
@@ -18,8 +18,12 @@ export class DroneChannelsBand extends EventEmitter implements DroneChannel {
   sendMission(mission: [latitude: number, longitude: number][]): void {
     this.channels.forEach(channel => channel.sendMission(mission));
   }
+
+  close(): void {
+    this.channels.forEach(channel => channel.close());
+  }
   
-  private setupChannel(channel: SafeChannel): void {
+  private setupChannel(channel: DroneChannel): void {
     const emiter = channel.emit;
     // subscribe to all events
     /* eslint-disable @typescript-eslint/no-explicit-any */

@@ -15,17 +15,22 @@ export class SafeChannel extends EventEmitter implements DroneChannel {
         .catch( err => this.onIvalidMessage(rawMessage, err) ));
 
     this.socket.once('error', error => {
-      console.error('error in drone connection', error)
+      console.error('error in drone connection', error);
     });
 
     this.socket.once('close', () => {
-      console.log('drone connection closed')
+      console.log('drone connection closed');
       this.emit('close');
-    })
+    });
   }
 
   sendMission(mission: [latitude: number, longitude: number][]) {
     this.send(RTSMessageBuilder.mission(mission));
+  }
+
+  close() {
+    this.socket.close();
+    this.emit('close');
   }
 
   private send(message: OutcomingMessage) {
@@ -94,6 +99,8 @@ export class SafeChannel extends EventEmitter implements DroneChannel {
 
 export declare interface DroneChannel {
   sendMission(mission: [latitude: number, longitude: number][]): void
+
+  close(): void;
 
   emit(event: 'error', error: Error): void;
   emit(event: 'close'): void;

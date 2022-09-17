@@ -14,8 +14,8 @@ export class AssemblingSocket extends EventEmitter {
     super();
 
     this.socket.on('data', data => this.recive(data))
-      .once('error', err => this.fail(err))
-      .once('close', () => this.close(false));
+      .once('error', err => this.onFail(err))
+      .once('close', () => this.onClose(false));
   }
 
   send(message: string | Uint8Array) {
@@ -23,6 +23,10 @@ export class AssemblingSocket extends EventEmitter {
     header.writeUint32BE(message.length);
 
     this.socket.write( Buffer.concat([header, Buffer.from(message)]) );
+  }
+
+  close() {
+    this.socket.end();
   }
 
   private recive(data: Buffer): void {
@@ -102,12 +106,12 @@ export class AssemblingSocket extends EventEmitter {
     return this.consume(HEADER_LENGTH).readUint32BE();
   }
 
-  private fail(err: Error): void {
+  private onFail(err: Error): void {
     this.emit('error', err);
-    this.close(true);
+    this.onClose(true);
   }
 
-  private close(hasError: boolean): void {
+  private onClose(hasError: boolean): void {
     if(!this.closed) {
       this.emit('close', hasError);
     }
